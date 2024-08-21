@@ -8,7 +8,8 @@ import OrderPage from "./OrderPage";
 import PassUpdatePage from "./PassUpdatePage";
 import ForgotPassPage from "./ForgotPassPage";
 import ResetPassPage from "./ResetPassPage";
-
+import CartPage from "./CartPage";
+import CheckOutPage from "./CheckOutPage";
 export {
   AboutPage,
   IndexPage,
@@ -19,5 +20,7 @@ export {
   OrderPage,
   PassUpdatePage,
   ForgotPassPage,
-  ResetPassPage
+  ResetPassPage,
+  CartPage,
+  CheckOutPage
 };

@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { login } from "../redux/actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 function Copyright(props) {
   return (
@@ -39,6 +40,7 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const alert = useAlert();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error, isAuthenticated, user } = useSelector(
@@ -47,19 +49,23 @@ export default function SignIn() {
   console.log(user);
 
   React.useEffect(() => {
+    if (error) {
+      alert.error(error);
+    }
     if (isAuthenticated) {
       navigate("/account");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate,error]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // console.log({
-    //   email: data.get("email"),
-    //   password: data.get("password"),
-    // });
     dispatch(login(data.get("email"), data.get("password")));
+    if (isAuthenticated) {
+      alert.success("Login Successfull");
+    }else{
+      alert.error("Login Unsuccessfull");
+    }
   };
 
   return (

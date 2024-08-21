@@ -9,10 +9,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/actions/userAction.js";
 import { useAlert } from "react-alert";
 import { useNavigate } from "react-router-dom";
+import { ShoppingCart } from "@mui/icons-material";
 
 export default function PlaygroundSpeedDial() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
 
   const dispatch = useDispatch();
   const alert = useAlert();
@@ -34,10 +36,14 @@ export default function PlaygroundSpeedDial() {
   function dashboard() {
     navigate("/dashboard");
   }
+  function cart() {
+    navigate("/cart");
+  }
 
   const actions = [
-    { icon: <ListAltIcon />, name: "Orders", func: orders },
     { icon: <PersonIcon />, name: "Profile", func: profile },
+    { icon: <ListAltIcon />, name: "Orders", func: orders },
+    { icon: <ShoppingCart />, name: `Cart(${cartItems.length})`, func: cart },
     { icon: <ExtiToAppIcon />, name: "Logout", func: logout },
   ];
 

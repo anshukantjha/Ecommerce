@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
@@ -9,11 +9,13 @@ import { fetchProduct } from "../redux/actions/productAction";
 import { useParams } from "react-router-dom";
 import { Button, Input } from "../components/index";
 import ReactStars from "react-rating-stars-component";
+import { addItemsToCart } from "../redux/actions/cartAction";
 
 const ProductPage = () => {
   const alert = useAlert();
   const { id } = useParams();
   const { product, loading, error } = useSelector((state) => state.product);
+  const [quantity, setQuantity] = useState(1);
 
   const dispatch = useDispatch();
 
@@ -23,7 +25,23 @@ const ProductPage = () => {
     }
     dispatch(fetchProduct(id));
   }, [dispatch, id]);
-  console.log(product);
+  // console.log(product);
+
+  function decreaseQuantity() {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  }
+  function increaseQuantity() {
+    if (quantity < product.stock) {
+      setQuantity(quantity + 1);
+    }
+  }
+  function handleAddToCart() {
+    dispatch(addItemsToCart(id, quantity));
+    alert.success("Item added to Cart");
+  }
+
   return (
     <div className="my-2 lg:my-4">
       {loading ? (
@@ -84,16 +102,30 @@ const ProductPage = () => {
                   ${product.price}
                 </h1>
                 <div className="flex items-center mb-4">
-                  <Button className="border border-gray-300 p-2">-</Button>
+                  <Button
+                    onClick={decreaseQuantity}
+                    className="border border-gray-300 p-2"
+                  >
+                    -
+                  </Button>
                   <Input
                     type="number"
                     className=" border-gray-300 text-center cursor-not-allowed"
                     readOnly
+                    value={quantity}
                   />
 
-                  <Button className="border border-gray-300 p-2">+</Button>
+                  <Button
+                    onClick={increaseQuantity}
+                    className="border border-gray-300 p-2"
+                  >
+                    +
+                  </Button>
                 </div>
-                <Button className="bg-blue-600 text-white p-2 rounded w-full">
+                <Button
+                  onClick={handleAddToCart}
+                  className="bg-blue-600 text-white p-2 rounded w-full"
+                >
                   Add to Cart
                 </Button>
               </div>
@@ -123,8 +155,8 @@ const ProductPage = () => {
               REVIEWS
             </h1>
             <div className="flex gap-2 overflow-x-auto scroll-smooth scroll-m-0 scroll-p-0">
-             
-              {product.reviews && product.reviews.length > 0 ? (product.reviews.map((review, index) => (
+              {product.reviews && product.reviews.length > 0 ? (
+                product.reviews.map((review, index) => (
                   <div
                     key={index}
                     className="border-2 shadow-xl p-2 rounded-2xl w-full min-w-[250px]"
@@ -148,8 +180,12 @@ const ProductPage = () => {
                       {review.comment}
                     </div>
                   </div>
-                ))):(<div className="text-center font-thin text-2xl mx-auto">NO REVIEWS YET :)</div>)
-                }
+                ))
+              ) : (
+                <div className="text-center font-thin text-2xl mx-auto">
+                  NO REVIEWS YET :)
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import Search from "./Search";
 import RegisterComponent from "./RegisterComponent";
 import UserOptions from "./UserOptions"
 import ProtectedRoute from "./Route/ProtectedRoute";
+import CartItem from "./CartItem";
 
 export {
   Footer,
@@ -23,5 +24,6 @@ export {
   Search,
   RegisterComponent,
   UserOptions,
-  ProtectedRoute
+  ProtectedRoute,
+  CartItem
 };

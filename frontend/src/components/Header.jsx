@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import UserOptions from "./UserOptions";
+import { UserOptions } from "./index";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
 const Header = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -24,6 +25,14 @@ const Header = () => {
       {/* <div>
         <Search />
       </div> */}
+
+      {!isAuthenticated && (
+        <div className="text-3xl">
+          <Link to={"/cart"}>
+            <ShoppingCartOutlinedIcon />
+          </Link>
+        </div>
+      )}
 
       {isAuthenticated ? (
         <UserOptions />

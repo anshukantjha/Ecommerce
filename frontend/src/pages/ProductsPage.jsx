@@ -4,7 +4,7 @@ import ReactPaginate from "react-paginate";
 import { fetchProducts } from "../redux/actions/productAction";
 import { ProductCard, Loader, Search } from "../components/index";
 import { useNavigate, useParams } from "react-router-dom";
-import Slider from "@mui/material/slider";
+import {Slider} from "@mui/material"
 import {useAlert} from "react-alert";
 
 const categories = ["Laptop", "Phone", "Top", "Footwear", "Basic"];

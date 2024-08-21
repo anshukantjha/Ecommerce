@@ -17,6 +17,8 @@ import {
   PassUpdatePage,
   ForgotPassPage,
   ResetPassPage,
+  CartPage,
+  CheckOutPage,
 } from "./pages/index";
 import axios from "axios";
 import React, { useEffect } from "react";
@@ -77,6 +79,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckOutPage />} />
         </Route>
       </Routes>
     </>
