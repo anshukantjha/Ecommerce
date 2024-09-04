@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { Button, Loader, ProductCard } from "../components/index";
+import { Button, Loader, ProductCard } from "../../components/index";
 import {Helmet} from "react-helmet"
 import { useSelector,useDispatch } from "react-redux";
-import { fetchProducts } from "../redux/actions/productAction";
+import { fetchProducts } from "../../redux/actions/productAction";
 import { useAlert } from "react-alert";
 import { Link } from "react-router-dom";
 

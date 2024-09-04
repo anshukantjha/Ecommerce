@@ -8,13 +8,13 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockOpenlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { forgotPassword } from "../redux/actions/userAction";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { resetPassword } from "../../redux/actions/userAction";
 
 function Copyright(props) {
   return (
@@ -38,13 +38,27 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function ForgotPassPage() {
-    const [email, setEmail] = React.useState("")
+export default function ResetPassPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const params = useParams();
+
+  const { isAuthenticated } = useSelector((state) => state.user);
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/account");
+    }
+  }, [navigate,isAuthenticated]);
+
+  const [newPassword, setNewPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const allPasswords = { newPassword, confirmPassword };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(forgotPassword(email));
+    const token = params.token;
+    dispatch(resetPassword(token, allPasswords));
   };
 
   return (
@@ -60,13 +74,13 @@ export default function ForgotPassPage() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+            <LockOpenlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Password Recovery
           </Typography>
-          <p  className="text-xs text-gray-500">
-            A Email will be sent to your mail 
+          <p className="text-xs text-gray-500">
+            Enter your new and confirm it to reset the Password
           </p>
           <Box
             component="form"
@@ -78,22 +92,30 @@ export default function ForgotPassPage() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              label="New Password"
               autoFocus
-              value={email}
-              onChange={(e)=>setEmail(e.target.value)}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
             />
-           
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="confirmPassword"
+              label="Confirm Password "
+              name="confirmPassword"
+              autoFocus
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Send Mail
+              Reset
             </Button>
           </Box>
         </Box>

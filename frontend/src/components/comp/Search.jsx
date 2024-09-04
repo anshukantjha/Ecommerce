@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input } from "./index";
+import { Button, Input } from "../index";
 import { useDispatch,useSelector } from "react-redux";
 
 const Search = ({navigate}) => {

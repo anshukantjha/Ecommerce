@@ -25,7 +25,7 @@ export const addItemsToCart = (id, quantity) => async (dispatch,getState) => {
         product: product._id,
         name: product.name,
         price: product.price,
-        image: product.images[0]?.public_url,
+        image: product.images[0]?.url,
         stock: product.stock,
         ratings:product.ratings,
         quantity,
@@ -36,7 +36,7 @@ export const addItemsToCart = (id, quantity) => async (dispatch,getState) => {
   }
 };
 
-export const removeItemsFromCart = (id) => async (dispatch,getState) => {
+export const removeItemsFromCart = (id) => async (dispatch) => {
   try {
    
     dispatch({
@@ -47,3 +47,17 @@ export const removeItemsFromCart = (id) => async (dispatch,getState) => {
     console.log(error);
   }
 };
+
+
+export const saveShippingInfo = (data) => async(dispatch) =>{
+  try {
+    console.log(data)
+   
+    dispatch({
+      type: SAVE_SHIPPING_INFO,
+      payload: data
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}

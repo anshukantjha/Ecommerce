@@ -34,6 +34,7 @@ router.route("/me/update").put(isUserAuthenticated,upload.single('avatar'), upda
 router
   .route("/admin/users")
   .get(isUserAuthenticated, isRolesAuthorised("admin"), getAllUsers);
+  // .get(isUserAuthenticated, getAllUsers);
 router
   .route("/admin/user/:id")
   .get(isUserAuthenticated, isRolesAuthorised("admin"), getSingleUser)

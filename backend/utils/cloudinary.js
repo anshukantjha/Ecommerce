@@ -11,13 +11,13 @@ cloudinary.config({
   api_secret:process.env.CLOUDINARY_SECRET_KEY,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (folderName,localFilePath) => {
   try {
     if (!localFilePath) return null;
     // uploading file
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
-      folder:"Ecommerce/avatar"
+      folder:`Ecommerce/${folderName}`
     });
     // after upload
     console.log("File uploaded sucessfully on cloudinary ", response.url);
@@ -31,4 +31,12 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
-export { uploadOnCloudinary };
+const deleteFromCloudinary = async(public_id) =>{
+  try {
+    await cloudinary.uploader.destroy(public_id)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export { uploadOnCloudinary,deleteFromCloudinary };

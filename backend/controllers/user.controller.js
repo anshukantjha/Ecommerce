@@ -13,8 +13,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
   const avatarLocalPath = req.file.path;
 
-  const cloudResponse = await uploadOnCloudinary(avatarLocalPath);
-  console.log(cloudResponse);
+  const cloudResponse = await uploadOnCloudinary('avatar', avatarLocalPath);
+  // console.log(cloudResponse);
   const userData = await User.create({
     name,
     email,
@@ -31,12 +31,12 @@ const registerUser = asyncHandler(async (req, res, next) => {
 const loginUser = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new ApiError(201, "Email or Password is empty"));
+    return next(new ApiError(401, "Email or Password is empty"));
   }
   const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
-    return next(new ApiError(201, "User doesn't Exist"));
+    return next(new ApiError(404, "User doesn't Exist"));
   }
   const isPassMatched = await user.comparePassword(password);
   // const isPassMatched = user.password === password;
@@ -44,7 +44,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
   // console.log(user.password);
 
   if (!isPassMatched) {
-    return next(new ApiError(201, "Invalid User Credentials!"));
+    return next(new ApiError(403, "Invalid User Credentials!"));
   }
 
   loginwithToken(user, res, "User LoggedIn sucessfully");
@@ -137,6 +137,7 @@ const updatePassword = asyncHandler(async (req, res, next) => {
   if (!isPassMatched) {
     return next(new ApiError(400, "Old Password is Incorrect!"));
   }
+  
   if (newPassword !== confirmPassword) {
     return next(new ApiError(401, "Both Passwords are different"));
   }
@@ -156,10 +157,12 @@ const updateProfile = asyncHandler(async (req, res, next) => {
   }
 
   const avatarLocalPath = req.file?.path;
+  console.log(avatarLocalPath)
   let newUserData = { name, email };
 
   if (avatarLocalPath) {
-    const cloudResponse = await uploadOnCloudinary(avatarLocalPath);
+    const cloudResponse = await uploadOnCloudinary('avatar',avatarLocalPath);
+    console.log(cloudResponse)
     newUserData.avatar = {
       public_id: cloudResponse.public_id,
       url: cloudResponse.secure_url,
@@ -200,7 +203,7 @@ const updateProfileRole = asyncHandler(async (req, res, next) => {
     role: req.body.role,
   };
 
-  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+  const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
     new: true,
     runValidators: true,
     useFindAndModify: false,
@@ -220,6 +223,9 @@ const deleteUser = asyncHandler(async (req, res, next) => {
   // Remove cloudinary
   if (!user) {
     return next(new ApiError(400, `User not found with ${req.params.id}`));
+  }
+  if (user.role === 'admin') {
+    return next(new ApiError(400, `You cant delete a admin directly`));
   }
   await user.deleteOne();
   res.status(200).json(new ApiResponse(201, user, "User deleted Successfully"));

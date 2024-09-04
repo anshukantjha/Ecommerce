@@ -13,8 +13,10 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Input from "@mui/material/Input";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useDispatch } from "react-redux";
-import { register } from "../redux/actions/userAction";
+import { useDispatch, useSelector } from "react-redux";
+import { clearErrors, register } from "../redux/actions/userAction";
+import { useNavigate } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 function Copyright(props) {
   return (
@@ -38,6 +40,22 @@ const defaultTheme = createTheme();
 
 export default function SignUp() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const alert = useAlert()
+
+  const { message, error, isAuthenticated } = useSelector(
+    (state) => state.user
+  );
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/account");
+    }
+    if (error) {
+      alert.error(error);
+      dispatch(clearErrors());
+    }
+  }, [isAuthenticated, navigate, alert, error]);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -45,9 +63,9 @@ export default function SignUp() {
     const email = data.get("email");
     const password = data.get("password");
     const avatar = data.get("avatar");
-    console.log(name,email,password,avatar)
+    // console.log(name,email,password,avatar)
 
-    dispatch(register(name, email, password,avatar));
+    dispatch(register(name, email, password, avatar));
   };
 
   return (

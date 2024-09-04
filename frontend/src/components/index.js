@@ -1,16 +1,17 @@
-import Footer from "./Footer";
-import Header from "./Header";
 import Layout from "./Layout";
 import LoginComponent from "./LoginComponent";
-import Button from "./Button";
-import Input from "./Input";
 import ProductCard from "./ProductCard";
 import Loader from "./Loader";
-import Search from "./Search";
 import RegisterComponent from "./RegisterComponent";
 import UserOptions from "./UserOptions"
 import ProtectedRoute from "./Route/ProtectedRoute";
 import CartItem from "./CartItem";
+import CheckoutSteps from "./checkoutSteps";
+import Button from "./comp/Button";
+import Footer from "./comp/Footer";
+import Header from "./comp/Header";
+import Input from "./comp/Input";
+import Search from "./comp/Search";
 
 export {
   Footer,
@@ -25,5 +26,6 @@ export {
   RegisterComponent,
   UserOptions,
   ProtectedRoute,
-  CartItem
+  CartItem,
+  CheckoutSteps
 };

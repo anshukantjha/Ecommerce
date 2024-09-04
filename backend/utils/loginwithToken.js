@@ -9,7 +9,7 @@ const loginwithToken = (user,res,msg) => {
     return res
       .status(201)
       .cookie("token", token, options)
-      .json(new ApiResponse(200, { user, token }, msg));
+      .json(new ApiResponse(200, user, msg));
 }
 
 export default loginwithToken

@@ -12,7 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { login } from "../redux/actions/userAction";
+import { clearErrors, login } from "../redux/actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "react-alert";
@@ -43,29 +43,26 @@ export default function SignIn() {
   const alert = useAlert();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated, user } = useSelector(
+  const { error, isAuthenticated} = useSelector(
     (state) => state.user
   );
-  console.log(user);
+  // console.log(user);
 
   React.useEffect(() => {
-    if (error) {
-      alert.error(error);
-    }
     if (isAuthenticated) {
       navigate("/account");
     }
-  }, [isAuthenticated, navigate,error]);
+    if (error) {
+      alert.error(error);
+      dispatch(clearErrors());
+    }
+  }, [isAuthenticated, navigate, alert, error]);
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     dispatch(login(data.get("email"), data.get("password")));
-    if (isAuthenticated) {
-      alert.success("Login Successfull");
-    }else{
-      alert.error("Login Unsuccessfull");
-    }
   };
 
   return (

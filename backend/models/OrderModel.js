@@ -30,7 +30,7 @@ const orderSchema = new mongoose.Schema(
       },
     },
 
-    orderInfo: [
+    orderItems: [
       {
         name: {
           type: String,
@@ -61,10 +61,6 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     paymentInfo: {
-      style: {
-        type: String,
-        required: true,
-      },
       id: {
         type: String,
         required: true,

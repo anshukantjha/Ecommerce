@@ -22,11 +22,7 @@ export default function PlaygroundSpeedDial() {
     navigate("/orders");
   }
   function profile() {
-    if (isAuthenticated) {
-      navigate("/account");
-    } else {
-      navigate("/login");
-    }
+    isAuthenticated ? navigate("/account") : navigate("/login");
   }
   function logout() {
     dispatch(logoutUser());
@@ -34,7 +30,7 @@ export default function PlaygroundSpeedDial() {
   }
 
   function dashboard() {
-    navigate("/dashboard");
+    navigate("/admin/dashboard");
   }
   function cart() {
     navigate("/cart");
@@ -60,7 +56,7 @@ export default function PlaygroundSpeedDial() {
       <SpeedDial
         className="absolute top-0 right-2 "
         ariaLabel="SpeedDial playground example"
-        icon={<img src={user?.avatar?.url} alt="Profile" />}
+        icon={<img className="rounded-full w-full h-full object-cover" src={user?.avatar?.url} alt="Profile" />}
         direction={"down"}
       >
         {actions.map((action) => (

@@ -1,9 +1,10 @@
 // store.js
 import { configureStore } from "@reduxjs/toolkit";
 import productsReducer from "./redux/reducers/productsReducer";
-import productReducer from "./redux/reducers/productReducer";
-import { passwordReducer, userReducer } from "./redux/reducers/userReducer";
+import productReducer, { newProductReducer, newReviewReducer, productDetailsReducer, productReviewsReducer, reviewReducer } from "./redux/reducers/productReducer";
+import { allUsersReducer, passwordReducer, profileReducer, updateReducer, userDetailsReducer, userReducer } from "./redux/reducers/userReducer";
 import { cartReducer } from "./redux/reducers/cartReducer";
+import { allOrdersReducer, myOrdersReducer, newOrderReducer, orderDetailsReducer, orderReducer } from "./redux/reducers/orderReducer";
 
 // Load state from localStorage
 const loadState = () => {
@@ -34,8 +35,26 @@ const store = configureStore({
     user: userReducer,
     password: passwordReducer,
     cart: cartReducer,
+    newOrder: newOrderReducer,
+    myOrders: myOrdersReducer,
+    orderDetails: orderDetailsReducer,
+    newReview: newReviewReducer,
+    newProduct: newProductReducer,
+    allOrders: allOrdersReducer,
+    order: orderReducer,
+    allUsers: allUsersReducer,
+    userDetails: userDetailsReducer,
+    update: profileReducer,
+    profile: updateReducer,
+    productDetails: productDetailsReducer,
+    productReviews: productReviewsReducer,
+    review: reviewReducer,
   },
   preloadedState,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 // Save state to localStorage whenever it changes

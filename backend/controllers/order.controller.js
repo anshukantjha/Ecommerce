@@ -6,11 +6,12 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 // Create new Order
 const newOrder = asyncHandler(async (req, res, next) => {
-  const { shippingInfo, orderInfo, paymentInfo, prices } = req.body;
+  // console.log(req.body)
+  const { shippingInfo, orderItems, paymentInfo, prices } = req.body;
 
   const order = await Order.create({
     shippingInfo,
-    orderInfo,
+    orderItems,
     paymentInfo,
     prices,
     user: req.user._id,
@@ -73,6 +74,7 @@ const getAllOrders = asyncHandler(async (req, res, next) => {
 
 // update Order Status --Admin
 const updateOrder = asyncHandler(async (req, res, next) => {
+  console.log('req body',req.body);
   const order = await Order.findById(req.params.id);
 
   if (!order) {
@@ -83,7 +85,7 @@ const updateOrder = asyncHandler(async (req, res, next) => {
     return next(new ApiError(404, "You have already delivered this Order"));
   }
 
-  order.orderInfo.forEach(async (or) => {
+  order.orderItems.forEach(async (or) => {
     await updateStock(or.product, or.quantity);
   });
 
@@ -111,7 +113,7 @@ const deleteOrder = asyncHandler(async (req, res, next) => {
     return next(new ApiError(404, "Order not found!"));
   }
 
-  order.deleteOne();
+  await order.deleteOne();
   res.status(200).json(new ApiResponse(201,{},"Order deleted Successfully"))
 });
 

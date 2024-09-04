@@ -10,18 +10,31 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Input from "@mui/material/Input";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useDispatch } from "react-redux";
-import {useNavigate} from "react-router-dom"
-import { updateProfile } from "../redux/actions/userAction";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { clearErrors, updateProfile } from "../../redux/actions/userAction";
 
 const defaultTheme = createTheme();
 
 export default function EditPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [avatar, setAvatar] = React.useState(null);
+
+  const { error, isUpdated } = useSelector((state) => state.update);
+
+  React.useEffect(() => {
+    if (isUpdated) {
+      navigate("/account");
+    }
+    if (error) {
+      alert.error(error);
+      dispatch(clearErrors());
+    }
+  }, [isUpdated, navigate, error, alert]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData();
@@ -31,7 +44,6 @@ export default function EditPage() {
       formData.append("avatar", avatar);
     }
     dispatch(updateProfile(formData));
-    navigate("/account")
   };
 
   return (

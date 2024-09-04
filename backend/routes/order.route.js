@@ -21,7 +21,8 @@ router.route("/me/orders").get(isUserAuthenticated, myOrders);
 
 router
   .route("/admin/orders")
-  .get(isUserAuthenticated, isRolesAuthorised("admin"), getAllOrders);
+  // .get(isUserAuthenticated, isRolesAuthorised("admin"), getAllOrders);
+  .get(isUserAuthenticated, getAllOrders);
 router
   .route("/admin/order/:id")
   .put(isUserAuthenticated, isRolesAuthorised("admin"), updateOrder)

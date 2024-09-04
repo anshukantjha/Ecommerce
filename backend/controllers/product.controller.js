@@ -3,6 +3,7 @@ import { ApiError } from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 
 // anyone can acess
 const getAllProducts = asyncHandler(async (req, res, next) => {
@@ -32,22 +33,99 @@ const getAllProducts = asyncHandler(async (req, res, next) => {
   });
 });
 
+// get products for admin only
+const getAdminProducts = asyncHandler(async (req, res, next) => {
+  const products = await Product.find();
+
+  res.status(200).json({
+    success: true,
+    products,
+  });
+});
+
 // Create Product --admin
 const createProduct = asyncHandler(async (req, res, next) => {
-  req.body.creator = req.user.id;
-  const product = await Product.create(req.body);
-  return res.status(201).json(new ApiResponse(200, product));
+
+
+  try {
+    const { name, price, description, category, stock } = req.body;
+
+    // Array to hold the cloudinary image responses
+    let imagesArray = [];
+
+    // Loop through each file and upload it to Cloudinary
+    for (let i = 0; i < req.files.length; i++) {
+      const productLocalPath = req.files[i].path;
+
+      const cloudResponse = await uploadOnCloudinary('products', productLocalPath);
+      if (cloudResponse) {
+        imagesArray.push({
+          public_id: cloudResponse.public_id,
+          url: cloudResponse.secure_url,
+        });
+      }
+    }
+
+    // Save product to the database with images
+    const product = await Product.create({
+      name,
+      price,
+      description,
+      category,
+      stock,
+      images: imagesArray, // Save the array of images
+      creator: req.user._id
+    });
+
+    res.status(201).json({ success: true, product });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
+
 
 // Update Product --admin
 const updateProduct = asyncHandler(async (req, res, next) => {
+  console.log(`req.files`, req.files);
+  console.log(`req.body`, req.body);
+
+  const { name, price, description, category, stock } = req.body;
+
+  // Array to hold the cloudinary image responses
+  let imagesArray = [];
+
+  // Loop through each file and upload it to Cloudinary
+  for (let i = 0; i < req.files.length; i++) {
+    const productLocalPath = req.files[i].path;
+
+    const cloudResponse = await uploadOnCloudinary('products', productLocalPath);
+    if (cloudResponse) {
+      imagesArray.push({
+        public_id: cloudResponse.public_id,
+        url: cloudResponse.secure_url,
+      });
+    }
+  }
+
+  // Find the product by ID
   let product = await Product.findById(req.params.id);
 
   if (!product) {
     return next(new ApiError(500, "Product not found!"));
   }
 
-  product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+  // Merge old images with the new images
+  const updatedImages = [...product.images, ...imagesArray];
+
+  // Update the product with the new data and images
+  product = await Product.findByIdAndUpdate(req.params.id, {
+    name,
+    price,
+    description,
+    category,
+    stock,
+    images: updatedImages, // Update the images array
+  }, {
     new: true,
     runValidators: true,
     useFindAndModify: false,
@@ -56,12 +134,17 @@ const updateProduct = asyncHandler(async (req, res, next) => {
   return res.status(201).json(new ApiResponse(200, product));
 });
 
+
 // Delete Product --admin
 const deleteProduct = asyncHandler(async (req, res, next) => {
   let product = await Product.findById(req.params.id);
 
   if (!product) {
     return next(new ApiError(500, "Product not found!"));
+  }
+
+  for (let i = 0; i < product.images.length; i++) {
+    deleteFromCloudinary(product.images[i].public_id)
   }
 
   await product.deleteOne();
@@ -82,7 +165,6 @@ const getProductDetails = asyncHandler(async (req, res, next) => {
 });
 
 // Create or update review of product
-
 const createProductReview = asyncHandler(async (req, res, next) => {
   const { rating, comment, productId } = req.body;
 
@@ -129,7 +211,7 @@ const createProductReview = asyncHandler(async (req, res, next) => {
 });
 
 const getAllReviews = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.query.productId);
+  const product = await Product.findById(req.query.id);
   if (!product) {
     return next(new ApiError(404, "Product not found"));
   }
@@ -138,6 +220,7 @@ const getAllReviews = asyncHandler(async (req, res, next) => {
 
 const deleteReview = asyncHandler(async (req, res, next) => {
   const productId = req.query.productId;
+  const reviewId = req.query.id;
   const product = await Product.findById(productId);
 
   if (!product) {
@@ -145,7 +228,7 @@ const deleteReview = asyncHandler(async (req, res, next) => {
   }
 
   const reviews = product.reviews.filter(
-    (rev) => rev._id.toString() !== req.query.revId.toString()
+    (rev) => rev._id.toString() !== reviewId.toString()
   );
 
   let avg = 0;
@@ -181,4 +264,5 @@ export {
   createProductReview,
   deleteReview,
   getAllReviews,
+  getAdminProducts
 };

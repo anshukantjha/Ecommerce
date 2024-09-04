@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { UserOptions } from "./index";
+import { UserOptions } from "../index";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
 const Header = () => {
-  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const {user,isAuthenticated } = useSelector((state) => state.user);
   return (
     <div className=" bg-gray-200 flex justify-between items-center px-4 md:px-5 w-full h-16">
       <div className="font-bold text-2xl text-red-500">

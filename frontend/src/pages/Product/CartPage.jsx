@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
-import { CartItem } from "../components/index";
 import { Link } from "react-router-dom";
-import { Button } from "../components/index";
-import { removeItemsFromCart } from "../redux/actions/cartAction";
+import { Button,CartItem } from "../../components/index";
+import { removeItemsFromCart } from "../../redux/actions/cartAction";
 import { useDispatch, useSelector } from "react-redux";
 import { RemoveShoppingCartOutlined } from "@mui/icons-material";
 import { Typography } from "@mui/material";
@@ -28,7 +27,7 @@ const CartPage = () => {
   }, [cartItems]);
 
   return (
-    <div>
+    <>
       <h1 className="text-2xl">Shopping Cart</h1>
       {cartItems.length === 0 ? (
         <div className="min-h-60 flex flex-col justify-center items-center">
@@ -41,15 +40,15 @@ const CartPage = () => {
         </div>
       ) : (
         <>
-          <Link to={"/checkout"} className="flex justify-center my-2">
+          <Link to={"/shipping"} className="flex justify-center my-2">
             <Button>Checkout ₹({grossAmount})</Button>
           </Link>
           {cartItems.map((item) => (
-              <CartItem item={item} deleteItemCard={deleteItemCard} />
+              <CartItem key={item.product} item={item} deleteItemCard={deleteItemCard} />
           ))}
         </>
       )}
-    </div>
+    </>
   );
 };
 
